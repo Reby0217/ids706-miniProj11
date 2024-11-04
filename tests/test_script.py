@@ -1,74 +1,75 @@
-import pytest
-from src.cli import main
-import pandas as pd
-from unittest.mock import patch
+import unittest
+from pyspark.sql import SparkSession
 
 
-@pytest.fixture
-def mock_data():
-    data = {
-        "Name": ["Alice", "Bob", "Charlie"],
-        "Country": ["USA", "UK", "Canada"],
-        "Industry": ["Tech", "Finance", "Tech"],
-        "Net Worth (in billions)": [100, 200, 150],
-        "Company": ["CompanyA", "CompanyB", "CompanyC"],
-    }
-    return pd.DataFrame(data)
+class TestWealthDataProcessing(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Initialize Spark session for testing
+        cls.spark = SparkSession.builder.appName(
+            "TestWealthDataProcessing"
+        ).getOrCreate()
+
+        # Load test data
+        data = [
+            ("Rob Walton", "Mexico", "Finance", 8.5, "Walmart"),
+            ("Sergey Brin", "USA", "Automotive", 44.76, "Google"),
+            ("Steve Ballmer", "USA", "Manufacturing", 13.43, "Koch Industries"),
+            ("Alice Walton", "USA", "Technology", 192.96, "Oracle"),
+            ("Mukesh Ambani", "France", "Cosmetics", 17.46, "Microsoft"),
+            ("Jeff Bezos", "USA", "Cosmetics", 117.13, "Grupo Carso"),
+            ("Amancio Ortega", "USA", "Petrochemicals", 47.87, "Google"),
+        ]
+        columns = ["Name", "Country", "Industry", "Net Worth (in billions)", "Company"]
+
+        # Create DataFrame
+        cls.df = cls.spark.createDataFrame(data, columns)
+        cls.df.createOrReplaceTempView("wealth_data")
+
+    def test_industry_avg_net_worth(self):
+        # Calculate average net worth by industry using transformation
+        industry_avg = (
+            self.df.groupBy("Industry").avg("Net Worth (in billions)").collect()
+        )
+        expected_values = {
+            "Finance": 8.5,
+            "Automotive": 44.76,
+            "Manufacturing": 13.43,
+            "Technology": 192.96,
+            "Cosmetics": 67.3,  # Average of values in test data
+            "Petrochemicals": 47.87,
+        }
+        for row in industry_avg:
+            industry = row["Industry"]
+            avg_net_worth = round(row["avg(Net Worth (in billions))"], 2)
+            self.assertAlmostEqual(avg_net_worth, expected_values[industry])
+
+    def test_top_countries_by_net_worth(self):
+        # Query for top countries by average net worth using SQL
+        result = self.spark.sql(
+            """
+            SELECT Country, AVG(`Net Worth (in billions)`) AS Average_Net_Worth
+            FROM wealth_data
+            GROUP BY Country
+            ORDER BY Average_Net_Worth DESC
+            LIMIT 3
+        """
+        ).collect()
+
+        expected_values = {
+            "USA": (44.76 + 13.43 + 192.96 + 117.13 + 47.87) / 5,
+            "Mexico": 8.5,
+            "France": 17.46,
+        }
+        for row in result:
+            country = row["Country"]
+            avg_net_worth = round(row["Average_Net_Worth"], 2)
+            self.assertAlmostEqual(avg_net_worth, expected_values[country])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.spark.stop()
 
 
-# Notice the updated patch path to correctly patch `read_data` where it's used in `cli.py`
-@patch("src.cli.read_data")
-@patch("src.cli.get_descriptive_statistics")
-@patch("src.cli.get_industry_avg_net_worth")
-def test_main(mock_get_industry_avg, mock_get_stats, mock_read_data, mock_data, capsys):
-    # Mock the read_data function to return the sample dataframe
-    mock_read_data.return_value = mock_data
-
-    # Mock the get_descriptive_statistics function
-    mock_get_stats.return_value = mock_data.describe()
-
-    # Mock the get_industry_avg_net_worth function
-    mock_get_industry_avg.return_value = mock_data.groupby("Industry")[
-        "Net Worth (in billions)"
-    ].mean()
-
-    # Run the main function
-    main()
-
-    # Capture the output
-    captured = capsys.readouterr()
-
-    # Check that the output contains the expected data
-    assert "Sample Data" in captured.out
-    assert "Descriptive statistics" in captured.out
-    assert "Average Net Worth by Industry" in captured.out
-
-    # Ensure specific values from the mock data are printed
-    assert "Alice" in captured.out
-    assert "Tech" in captured.out
-    assert "Finance" in captured.out
-    assert "150.0" in captured.out  # Verify specific value
-
-    # Ensure functions were called the correct number of times
-    mock_read_data.assert_called_once()
-    mock_get_stats.assert_called_once()
-    mock_get_industry_avg.assert_called_once()
-
-
-# Test when the dataset file is missing
-@patch("src.cli.read_data", side_effect=FileNotFoundError)
-def test_main_file_not_found(mock_read_data, capsys):
-    # Run the main function and capture the return value
-    result = main()
-
-    # Capture the output
-    captured = capsys.readouterr()
-
-    # Check that the error message is printed
-    assert "Error: File not found" in captured.out
-
-    # Ensure that read_data was called once and raised the FileNotFoundError
-    mock_read_data.assert_called_once()
-
-    # Check that the function returns None (implicit return on early exit)
-    assert result is None  # This checks if the return statement is hit
+if __name__ == "__main__":
+    unittest.main()

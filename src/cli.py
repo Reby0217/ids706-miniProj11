@@ -1,27 +1,69 @@
-from src.lib import read_data, get_descriptive_statistics, get_industry_avg_net_worth
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import avg
 
 
 def main():
-    dataset_path = "Top_1000_wealthiest_people.csv"
+    # Initialize a Spark session
+    spark = SparkSession.builder.appName(
+        "Top1000WealthiestDataProcessing"
+    ).getOrCreate()
 
-    try:
-        data = read_data(dataset_path)
-    except FileNotFoundError:
-        print(f"Error: File not found - {dataset_path}")
-        return
+    # Load the CSV file into a DataFrame
+    df = spark.read.csv(
+        "src/Top_1000_wealthiest_people.csv", header=True, inferSchema=True
+    )
 
-    # Display a sample of the data
-    print("Sample Data:\n", data.head())
+    # Data transformation: Calculate the average net worth per industry
+    industry_avg_net_worth = df.groupBy("Industry").agg(
+        avg("Net Worth (in billions)").alias("Average_Net_Worth")
+    )
 
-    # Descriptive statistics
-    print("\nDescriptive statistics:")
-    print(get_descriptive_statistics(data))
+    # Spark SQL Query: Register the DataFrame as a SQL temporary view and query the top 5 countries by average net worth
+    df.createOrReplaceTempView("wealth_data")
+    top_countries_by_net_worth = spark.sql(
+        """
+        SELECT Country, AVG(`Net Worth (in billions)`) AS Average_Net_Worth
+        FROM wealth_data
+        GROUP BY Country
+        ORDER BY Average_Net_Worth DESC
+        LIMIT 5
+    """
+    )
 
-    # Group data by industry and show average net worth
-    industry_stats = get_industry_avg_net_worth(data)
-    print("\nAverage Net Worth by Industry:")
-    print(industry_stats)
+    # Show results
+    industry_avg_net_worth.show()
+    top_countries_by_net_worth.show()
+
+    # Return the results for testing purposes
+    return industry_avg_net_worth, top_countries_by_net_worth
+
+
+def generate_report(industry_avg_net_worth, top_countries_by_net_worth):
+    # Generate Markdown summary report
+    report_content = """# Wealth Data Summary Report
+
+## Average Net Worth by Industry
+| Industry | Average Net Worth (in billions) |
+|----------|--------------------------------|
+"""
+    for row in industry_avg_net_worth.collect():
+        report_content += f"| {row['Industry']} | {row['Average_Net_Worth']:.2f} |\n"
+
+    report_content += "\n## Top 5 Countries by Average Net Worth\n"
+    report_content += "| Country | Average Net Worth (in billions) |\n"
+    report_content += "|---------|--------------------------------|\n"
+    for row in top_countries_by_net_worth.collect():
+        report_content += f"| {row['Country']} | {row['Average_Net_Worth']:.2f} |\n"
+
+    # Save the report to a markdown file
+    with open("WealthData_Summary_Report.md", "w") as f:
+        f.write(report_content)
 
 
 if __name__ == "__main__":
-    main()
+    spark = SparkSession.builder.appName(
+        "Top1000WealthiestDataProcessing"
+    ).getOrCreate()
+    industry_avg_net_worth, top_countries_by_net_worth = main()
+    generate_report(industry_avg_net_worth, top_countries_by_net_worth)
+    spark.stop()

@@ -28,13 +28,13 @@ jobs:
           . venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-          pip install jupyter nbval ipykernel
+      #     pip install jupyter nbval ipykernel
 
-      # Install the Python kernel for Jupyter
-      - name: Install Jupyter kernel
-        run: |
-          . venv/bin/activate
-          python -m ipykernel install --user
+      # # Install the Python kernel for Jupyter
+      # - name: Install Jupyter kernel
+      #   run: |
+      #     . venv/bin/activate
+      #     python -m ipykernel install --user
 
       # Run the tests within the virtual environment
       - name: Run tests

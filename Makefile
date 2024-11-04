@@ -10,10 +10,8 @@ setup:
 
 # Run tests within the virtual environment
 test:
-	@echo "Running tests in tests/test_lib.py..." 
 	@echo "Running tests in tests/test_script.py..." 
 	. venv/bin/activate && PYTHONPATH=. pytest tests/ -q
-	. venv/bin/activate && pytest --nbval src/individual_proj_1.ipynb
 
 # Lint the source code and tests
 lint:
@@ -26,6 +24,10 @@ format:
 # Clean the virtual environment
 clean:
 	rm -rf venv
+
+# Run the CLI application to generate the report
+run:
+	. venv/bin/activate && python src/cli.py
 
 # Run all major tasks: install, setup, lint, test, format
 all: install setup lint test format
