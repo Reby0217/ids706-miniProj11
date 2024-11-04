@@ -5,6 +5,7 @@
 [![Lint](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/lint.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/lint.yml)
 [![Format](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/format.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/format.yml)
 [![Tests](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/test.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/test.yml)
+[![Report](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/report.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/report.yml)
 
 This project demonstrates the implementation of Continuous Integration (CI) using GitHub Actions for a Python-based Data Science project. It focuses on automating testing, code formatting, linting, and dependency management. The project performs descriptive statistics analysis using a dataset of the 1000 wealthiest people globally.
 
