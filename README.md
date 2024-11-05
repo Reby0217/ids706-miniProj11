@@ -59,7 +59,8 @@ This project demonstrates large-scale data processing using PySpark, focusing on
    - **Average Net Worth by Industry**: Summary of net worth across various industries.
    - **Top 5 Countries by Average Net Worth**: Highlights wealth distribution by country.
 
-  ![Run](screenshots/run.png)
+   - **Output data**:
+    ![Run](screenshots/run.png)
 
 ---
 
