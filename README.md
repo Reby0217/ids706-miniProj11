@@ -7,34 +7,61 @@
 [![Tests](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/test.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/test.yml)
 [![Report](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/report.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/report.yml)
 
-This project demonstrates the implementation of Continuous Integration (CI) using GitHub Actions for a Python-based Data Science project. It focuses on automating testing, code formatting, linting, and dependency management. The project performs descriptive statistics analysis using a dataset of the 1000 wealthiest people globally.
+This project demonstrates large-scale data processing using PySpark, focusing on extracting meaningful insights from a dataset of the top 1000 wealthiest people globally. The project meets the requirements for performing data processing with PySpark, applying both Spark SQL queries and data transformations, and utilizes GitHub Actions for Continuous Integration.
 
 ---
 
 
+## Deliverables
 
-## Project Structure
+- **PySpark Script**: A PySpark script (`src/cli.py`) that processes a comprehensive dataset of the world’s 1000 wealthiest individuals. Key operations include:
+  - Data Processing and Transformation: Loads and processes the dataset, calculating the average net worth per industry to illustrate wealth distribution across various sectors.
+  - Spark SQL Query: Identifies the top 5 countries by average net worth, highlighting geographical wealth concentration.
+- **Summary Report**: An automatically generated Markdown report (`WealthData_Summary_Report.md`) that includes:
+  - Average Net Worth by Industry: A summary of the average net worth across different industries.
+  - Top 5 Countries by Average Net Worth: A breakdown of the top countries by average wealth, providing insights into wealth distribution by region.
 
-- **Jupyter Notebook** (`src/individual_proj_1.ipynb`):
-  - Performs descriptive statistical analysis using Pandas.
-  - Tested using the `nbval` plugin for `pytest`.
-  
-- **Python Script** (`src/cli.py`):
-  - Reads the dataset, computes descriptive statistics, and groups the data by industry.
-  
-- **Shared Library** (`src/lib.py`):
-  - Contains reusable functions for data validation, reading data, calculating descriptive statistics, plotting, and calculating skewness/kurtosis.
+---
 
-- **Test Scripts**:
-  - `tests/test_lib.py`: Contains unit tests for the shared library functions.
-  - `tests/test_script.py`: Contains tests for the CLI functions.
-  
-- **Dataset** (`src/Top_1000_wealthiest_people.csv`):
-  - A CSV file containing data about the 1000 wealthiest people, including their name, country, industry, net worth (in billions), and company.
-  - **Dataset source**: [Top 1000 Wealthiest People in the World - Kaggle](https://www.kaggle.com/datasets/muhammadehsan02/top-1000-wealthiest-people-in-the-world)
+## Setup Instructions
+
+### Prerequisites
+
+- **Python**: Version 3.9+
+- **PySpark**: Installed via `requirements.txt`.
 
 
-## Makefile
+### Installation
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/Reby0217/ids706-miniProj10.git
+   cd ids706-miniProj10
+   ```
+
+2. **Set up the Virtual Environment**:
+   ```bash
+   make setup
+   ```
+   This command will create a virtual environment and prepare it for the project.
+
+3. **Install Dependencies**:
+   ```bash
+   make install
+   ```
+   Installs all required dependencies listed in `requirements.txt` within the virtual environment.
+
+4. **Run the Application and Generate the Report**:
+   ```bash
+   make run
+   ```
+   This command runs the PySpark script to process the dataset and generates the summary report `WealthData_Summary_Report.md` in the project root directory. The report includes:
+   - **Average Net Worth by Industry**: Summary of net worth across various industries.
+   - **Top 5 Countries by Average Net Worth**: Highlights wealth distribution by country.
+
+  ![Run](screenshots/run.png)
+
+### Makefile
 
 The project uses a `Makefile` to streamline development tasks, including testing, formatting, linting, and installing dependencies. Key Makefile commands:
 
@@ -58,76 +85,12 @@ The project uses a `Makefile` to streamline development tasks, including testing
   make install
   ```
 
+- **Generate Report**: Runs the CLI script to generate a Markdown report.
+  ```bash
+  make run
+  ```
+
 - **All**: Runs all major tasks (`install`, `setup`, `lint`, `test`, and `format`) in one command.
   ```bash
   make all
   ```
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.9+
-- `pip` for managing dependencies
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/Reby0217/ids706-indvidual1.git
-   cd ids706-indvidual1
-   ```
-
-2. Create and activate a virtual environment:
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate 
-   ```
-
-3. Install dependencies:
-
-   ```bash
-   make install
-   ```
-
-### Running Tests
-
-To run all tests (for both the notebook and the scripts):
-
-```bash
-make test
-```
-
-### Linting and Formatting
-
-To format the code using `black`, run:
-
-```bash
-make format
-```
-
-To lint the code using `Ruff`, run:
-
-```bash
-make lint
-```
-
-## Data Sample
-![Data](screenshots/head.png)
-
-## Descriptive Statistics
-![Descriptive Stats](screenshots/descriptive_stat.png)
-
-### Skewness and Kurtosis of Net Worth Distribution
-![Skewness and kurtosis](screenshots/Skewness_and_kurtosis.png)
-
-### Average Net Worth by Industry
-![Avg by Industry](screenshots/industry_avg_net_worth.png)
-
-## Bar Plot: Average Net Worth by Industry
-![Bar Plot](screenshots/barplot.png)
-
-## Box Plot: Net Worth Distribution by Industry
-![Box Plot](screenshots/boxplot.png)
