@@ -15,11 +15,11 @@ This project demonstrates large-scale data processing using PySpark, focusing on
 ## Deliverables
 
 - **PySpark Script**: A PySpark script (`src/cli.py`) that processes a comprehensive dataset of the world’s 1000 wealthiest individuals. Key operations include:
-  - Data Processing and Transformation: Loads and processes the dataset, calculating the average net worth per industry to illustrate wealth distribution across various sectors.
-  - Spark SQL Query: Identifies the top 5 countries by average net worth, highlighting geographical wealth concentration.
+  - **Data Processing and Transformation**: Loads and processes the dataset, calculating the average net worth per industry to illustrate wealth distribution across various sectors.
+  - **Spark SQL Query**: Identifies the top 5 countries by average net worth, highlighting geographical wealth concentration.
 - **Summary Report**: An automatically generated Markdown report (`WealthData_Summary_Report.md`) that includes:
-  - Average Net Worth by Industry: A summary of the average net worth across different industries.
-  - Top 5 Countries by Average Net Worth: A breakdown of the top countries by average wealth, providing insights into wealth distribution by region.
+  - **Average Net Worth by Industry**: A summary of the average net worth across different industries.
+  - **Top 5 Countries by Average Net Worth**: A breakdown of the top countries by average wealth, providing insights into wealth distribution by region.
 
 ---
 
