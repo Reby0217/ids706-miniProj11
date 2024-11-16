@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  generate_report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Set up virtual environment and install dependencies
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Databricks Notebook
+        env:
+          DATABRICKS_USERNAME: ${{ secrets.DATABRICKS_USERNAME }}
+          DATABRICKS_PASSWORD: ${{ secrets.DATABRICKS_PASSWORD }}
+          DATABRICKS_HOST: "https://community.cloud.databricks.com"
+        run: |
+          curl -n -X POST -u "$DATABRICKS_USERNAME:$DATABRICKS_PASSWORD" \
+          -d '{
+              "name": "Run pipeline",
+              "existing_cluster_id": "1116-033808-4cljft5z",
+              "notebook_task": {
+                  "notebook_path": "/Users/kejia.liu@duke.edu/mini11"
+              }
+          }' \
+          "$DATABRICKS_HOST/api/2.0/jobs/runs/submit"

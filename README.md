@@ -1,11 +1,11 @@
 # IDS706 PySpark Data Processing
 
 ## Continuous Integration with GitHub Actions
-[![Install](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/install.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/install.yml)
-[![Lint](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/lint.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/lint.yml)
-[![Format](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/format.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/format.yml)
-[![Tests](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/test.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/test.yml)
-[![Report](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/report.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj10/actions/workflows/report.yml)
+[![Install](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/install.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/install.yml)
+[![Lint](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/lint.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/lint.yml)
+[![Format](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/format.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/format.yml)
+[![Tests](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/test.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/test.yml)
+[![Report](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/deploy.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/deploy.yml)
 
 This project demonstrates large-scale data processing using PySpark, focusing on extracting meaningful insights from a dataset of the top 1000 wealthiest people globally. The project meets the requirements for performing data processing with PySpark, applying both Spark SQL queries and data transformations, and utilizes GitHub Actions for Continuous Integration.
 
@@ -35,8 +35,8 @@ This project demonstrates large-scale data processing using PySpark, focusing on
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/Reby0217/ids706-miniProj10.git
-   cd ids706-miniProj10
+   git clone https://github.com/Reby0217/ids706-miniProj11.git
+   cd ids706-miniProj11
    ```
 
 2. **Set up the Virtual Environment**:
