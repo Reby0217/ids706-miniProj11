@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  generate_report:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
