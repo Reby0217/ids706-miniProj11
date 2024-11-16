@@ -1,6 +1,3 @@
-### Updated **README.md**
-
-```markdown
 # IDS706 Data Pipeline with Databricks
 
 ## Continuous Integration with GitHub Actions
@@ -10,211 +7,69 @@
 [![Tests](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/test.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/test.yml)
 [![Report](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/deploy.yml/badge.svg)](https://github.com/Reby0217/ids706-miniProj11/actions/workflows/deploy.yml)
 
-This project demonstrates a large-scale data pipeline using **Databricks** and **PySpark** to process and transform a dataset of the top 1000 wealthiest individuals. The pipeline includes a **data source** and a **data sink** configuration, a detailed PySpark script for data transformation, and a CI/CD pipeline using **GitHub Actions**. Additionally, the Databricks notebook used for this project is publicly available for review and reproducibility.
+This project demonstrates a large-scale data pipeline using **Databricks** and **PySpark** to process and transform a dataset of the top 1000 wealthiest individuals. The pipeline includes a **data source** and a **data sink** configuration, a detailed PySpark script for data transformation, and a CI/CD pipeline using **GitHub Actions**. The `deploy` action automates the execution of the Databricks notebook `mini11` using the Databricks REST API, processing the wealth dataset on a specified cluster. 
 
 ---
 
 ## Deliverables
 
 ### **Databricks Notebook**
-The primary notebook for the project is hosted on Databricks and can be accessed via the following link:
+The notebook for the project is hosted on Databricks and can be accessed via the following link:
 
 [Databricks Notebook - Mini11](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/415132133840757/3302015049726372/7884501530959638/latest.html)
 
----
+Here is a preview of the **notebook** interface:
 
-### **PySpark Script**
-The PySpark script (`src/cli.py`) performs the following operations:
-1. **Data Processing**:
-   - Loads the dataset into a PySpark DataFrame.
-   - Renames columns for clarity.
-2. **Data Transformation**:
-   - Filters records to include only `Technology` industry participants with `Net Worth > 100`.
-3. **Data Output**:
-   - Writes the transformed data to a **Delta Lake table** as the data sink.
+![Preview](screenshots/preview.png)
 
 ---
 
-## Setup Instructions
+## Databricks Configuration
 
-### Prerequisites
+### **Cluster Setup**
+The project utilizes a Databricks cluster for execution. Below is the configuration of the cluster used in this pipeline:
 
-- **Python**: Version 3.9+
-- **Databricks Account**: Free Community Edition is sufficient.
-- **PySpark**: Installed via `requirements.txt`.
+![Cluster Configuration](screenshots/cluster.png)
 
----
+### **Data Upload**
+The `Top_1000_wealthiest_people.csv` dataset is uploaded to Databricks and configured as a Delta table for processing. Below is the interface for uploading and previewing the data:
 
-### Installation
-
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/Reby0217/ids706-miniProj11.git
-   cd ids706-miniProj11
-   ```
-
-2. **Set up the Virtual Environment**:
-   ```bash
-   make setup
-   ```
-
-3. **Install Dependencies**:
-   ```bash
-   make install
-   ```
-
-4. **Run the Application and Generate the Report**:
-   ```bash
-   make run
-   ```
+![Data Upload](screenshots/data_source.png)
 
 ---
 
 ## PySpark Data Pipeline
 
-The data pipeline uses PySpark to process a dataset of the top 1000 wealthiest individuals:
+The data pipeline uses **PySpark** and **Spark SQL** to process a dataset of the top 1000 wealthiest individuals:
 
 1. **Source Dataset**: 
-   The dataset is loaded from a Delta table in Databricks, which contains the following columns:
-   - `Name`, `Country`, `Industry`, `Net Worth (in billions)`, and `Company`.
+   The dataset is initially loaded into a Delta table in Databricks. This table contains the following columns with default names: `_c0`, `_c1`, `_c2`, `_c3`, and `_c4`. These columns are renamed for better clarity:
+   - `Name`
+   - `Country`
+   - `Industry`
+   - `Net_Worth`
+   - `Company`
+
+   The source data is saved as a Delta table located at `/mnt/delta/source_table_wealth`.
+   ![Dataset Schema and Preview](screenshots/data.png)
 
 2. **Data Transformation**:
-   - Renames columns for better clarity.
-   - Filters data for individuals in the `Technology` industry with `Net Worth > 100`.
+   - The pipeline renames columns to meaningful names for better clarity and usability.
+   - A **temporary SQL view** is created to allow the use of Spark SQL for transformations.
+   - Using Spark SQL, the pipeline filters data to include only individuals in the `Technology` industry with a `Net_Worth > 100`. The query used:
+     ```sql
+     SELECT Name, Country, Industry, Net_Worth, Company
+     FROM wealth_data
+     WHERE Industry = 'Technology' AND Net_Worth > 100
+     ```
 
 3. **Sink Dataset**:
-   - The transformed data is saved into another Delta table, ensuring high-performance reads and writes.
-
-4. **Notebook Execution**:
-   - The PySpark logic and pipeline are encapsulated in the Databricks notebook available at the [published link](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/415132133840757/3302015049726372/7884501530959638/latest.html).
+   - The transformed data is written to another Delta table located at `/mnt/delta/sink_table_wealth`, ensuring high-performance reads and writes. This data sink contains the filtered dataset after the SQL transformation.
 
 ---
 
-## CI/CD Pipeline
+### Publish the notebook
+![Publish](screenshots/publish.png)
 
-This project uses **GitHub Actions** to automate the following tasks:
-1. **Testing**:
-   - Runs unit tests using `pytest`.
-2. **Linting**:
-   - Ensures code quality with `ruff`.
-3. **Formatting**:
-   - Auto-formats Python files with `black`.
-4. **Deployment**:
-   - Executes the Databricks notebook via the Databricks REST API.
-
----
-
-## Makefile
-
-The Makefile provides shortcuts for common development tasks:
-
-- **Test**:
-  ```bash
-  make test
-  ```
-  Runs unit tests for the project.
-
-- **Format**:
-  ```bash
-  make format
-  ```
-  Formats all Python files using `black`.
-
-- **Lint**:
-  ```bash
-  make lint
-  ```
-  Checks the code quality using `ruff`.
-
-- **Install**:
-  ```bash
-  make install
-  ```
-  Installs all required dependencies.
-
-- **Generate Report**:
-  ```bash
-  make run
-  ```
-  Runs the PySpark script and generates the data transformation report.
-
-- **All**:
-  ```bash
-  make all
-  ```
-  Runs all major tasks (`install`, `setup`, `lint`, `test`, and `format`).
-
----
-
-## Grading Criteria
-
-1. **Pipeline Functionality (20 points)**:
-   - The Databricks pipeline includes a functional **data source** (Delta table) and **data sink** (transformed Delta table).
-
-2. **Data Source and Sink Configuration (20 points)**:
-   - The pipeline reads and writes Delta tables efficiently using PySpark transformations.
-
-3. **CI/CD Pipeline (10 points)**:
-   - GitHub Actions is used for testing, linting, formatting, and running the Databricks notebook.
-
-4. **Documentation (10 points)**:
-   - The README includes detailed setup instructions, functionality descriptions, and a link to the Databricks notebook.
-
----
-
-## Published Notebook
-
-To review the PySpark pipeline, visit the published notebook:
-
-[Databricks Notebook - Mini11](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/415132133840757/3302015049726372/7884501530959638/latest.html)
-
----
-
-Let me know if you need further clarification or modifications!
-```Yes, this code meets the stated requirements:
-
----
-
-### **Requirement 1: Include at Least One Data Source and One Data Sink**
-- **Data Source:**
-  - The source data is loaded from a Delta table:
-    ```python
-    source_df = spark.read.format("delta").load("/mnt/delta/source_table_wealth")
-    ```
-  - The original data is also read from `default.top_1000_wealthiest_people_3_csv`, processed, and saved as a Delta table (`/mnt/delta/source_table_wealth`).
-
-- **Data Sink:**
-  - The transformed data is written to a new Delta table (`/mnt/delta/sink_table_wealth`):
-    ```python
-    transformed_df.write.format("delta").mode("overwrite").save("/mnt/delta/sink_table_wealth")
-    ```
-
-This satisfies the requirement of having at least one **data source** and one **data sink**.
-
----
-
-### **Requirement 2: Use of Spark SQL and Transformations**
-- **Transformations:**
-  - Renames columns for clarity:
-    ```python
-    df = df.withColumnRenamed("_c0", "Name") \
-           .withColumnRenamed("_c1", "Country") \
-           .withColumnRenamed("_c2", "Industry") \
-           .withColumnRenamed("_c3", "Net_Worth") \
-           .withColumnRenamed("_c4", "Company")
-    ```
-  - Filters data to include only individuals in the "Technology" industry with `Net_Worth > 100`:
-    ```python
-    transformed_df = source_df.filter("Industry == 'Technology' AND Net_Worth > 100")
-    ```
-
-- **Spark SQL Capability (Optional Enhancement):**
-  While Spark SQL is not explicitly used here, it can be easily added by registering the DataFrame as a temporary SQL table and performing SQL queries. For example:
-  ```python
-  source_df.createOrReplaceTempView("wealth_data")
-  sql_result = spark.sql("""
-      SELECT * FROM wealth_data
-      WHERE Industry = 'Technology' AND Net_Worth > 100
-  """)
-  ```
-
+### Cluster log
+![log](screenshots/log.png)
