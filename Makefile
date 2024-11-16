@@ -10,7 +10,6 @@ setup:
 
 # Run tests within the virtual environment
 test:
-	@echo "Running tests in tests/test_script.py..." 
 	. venv/bin/activate && PYTHONPATH=. pytest tests/ -q
 
 # Lint the source code and tests
